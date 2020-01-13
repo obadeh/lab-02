@@ -11,7 +11,10 @@ function Horn(image_url,title,description,keyword,horns){
     Horn.all.push(this)
 }
 
-let container = $('#photo-template');
+let container = $('<section></section>');
+container.addClass('container')
+
+
 
 Horn.prototype.render=function(){
  // Create a new empty div tag
@@ -29,7 +32,8 @@ hornOutput.find('h2').text( this.title );
 hornOutput.find('img').attr('src', this.image_url);
 hornOutput.find('p').text(this.description);
 
-$('main').append(hornOutput);
+$('main').append(container);
+$('.container').append(hornOutput);
 
 
 
@@ -50,13 +54,13 @@ function renderOption(){
 }
 
 $('#Keyword').on('change',function(){
-    $('div').hide()
-    let selected= $(this).val()
-    $(`.${selected}`).show()
+    $('div').hide();
+    let selected= $(this).val();
+    $(`.${selected}`).show();
     console.log('selected : ', selected);
     
 })
-function renderTitle(){
+
 $('#Title').on('change',function(){
     $('div').hide()
     let filterd= $(this).val()
@@ -71,10 +75,35 @@ console.log('fil : ', fil[0].keyword);
     // console.log('selected : ', selected2);
     
 })
-}
+
+renderPg1();
+$('#pg1').on('click',renderPg1)
+function renderPg1(){
+    console.log('pg1 clicked');
+    $('div').remove();
+    $('option').remove();
+    Horn.all=[];
+
 $.get('/data/page-1.json').then(data=>{
     data.forEach(value => {
     let hornss= new Horn(value.image_url,value.title,value.description,value.keyword,value.horns) 
     hornss.render()       
     });
 }).then( () => renderOption() ).then(()=>renderTitle())
+}
+
+$('#pg2').on('click',renderPg2)
+function renderPg2(){
+    console.log('pg2 clicked')
+    $('div').remove()
+    $('option').remove();
+
+    Horn.all=[];
+
+$.get('/data/page-2.json').then(data=>{
+    data.forEach(value => {
+    let hornss= new Horn(value.image_url,value.title,value.description,value.keyword,value.horns) 
+    hornss.render()       
+    });
+}).then( () => renderOption() )
+}
